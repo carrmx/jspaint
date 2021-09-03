@@ -213,6 +213,17 @@ body,
 	border-bottom: 1px solid var(--ButtonHilight);
 }
 
+.timeline-component {
+	border: 1px solid var(--ButtonHilight);
+    border-top-color: var(--ButtonShadow);
+    border-left-color: var(--ButtonShadow);
+	min-height: 100px;
+}
+.timeline-component .frame-container.currentFrame  {
+	border-right: 1px solid var(--ButtonDkShadow);
+    border-bottom: 1px solid var(--ButtonDkShadow);
+	width: 99px;
+}
 
 .component-ghost.dock {
 	outline: 1px solid black;

@@ -47,7 +47,9 @@ html, body, .jspaint {
 }
 .component-window .window-content,
 .component-window .window-content :not(table):not(tbody):not(tr):not(td) {
-	display: flex;
+	/*display: flex;
+	commented out to stop the popout tl from fucking up 
+	not sure what it did but im sure ill find out*/
 }
 .jspaint {
 	display: flex;
@@ -383,6 +385,88 @@ html, body, .jspaint {
 	width: 31px;
 	height: 32px;
 }
+.timeline-component {
+	display: flex;
+	flex-direction: row;
+	width: 800px;
+	margin: 8px;
+	padding: 2px;
+}
+.timeline-component .timeline-container {
+	min-width: 30px;
+}
+.timeline-component .tools {
+	display: block;
+	height: auto;
+	width: auto;
+}
+.timeline-component .tools-component {
+	height: auto;
+	padding: 0;
+	margin: 0;
+	align-items: normal;
+}
+.timeline-component .timeline-container:nth-child(2) {
+    overflow-x: scroll;
+}
+.timeline-component .ruler {
+	height: 18px;
+    width: 100%;
+	display: flex;
+}
+.timeline-component .ruler-node {
+    width: 100px;
+	min-width: 100px;
+    border-right: 1px grey solid;
+}
+.timeline-component .ruler-node p {
+	font-size: 12px;
+    margin: 0;
+	margin-left: 3px;
+	letter-spacing: 1px;
+}
+.timeline-component .menus {
+	display: block;
+	width: 100px;
+}
+.timeline-component .timeline {
+	display: flex;
+}
+.timeline-component .frame {
+	image-rendering: auto;
+	background: white;
+}
+.timeline-component .frame-container {
+	max-height: 100px;
+	max-width: 102px;
+	min-width: 99px;
+	position: relative;
+	overflow: hidden;
+	margin-right: 1px;
+}
+.timeline-component p.frame-label {
+	position: absolute;
+	top: -15px;
+	left: 4px;
+	color: silver;
+}
+.timeline-component .frame-container .menu-button {
+	height: 100px;
+    width: 100px;
+    opacity: 0;
+    position: absolute;
+}
+.timeline-component .frame.currentFrame {
+	width: 99px;
+}
+
+.onion-skin {
+	position: absolute;
+	z-index: 3;
+	pointer-events: none;
+	opacity: .1;
+}
+
 .current-colors,
 .color-button {
 	position: relative;

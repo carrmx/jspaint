@@ -1173,7 +1173,55 @@ window.menus = {
 			description: localize("Supports the project."),
 		},
 	],
+	[localize("&Animation Menu")]: [
+		{
+			item: localize("Play/Stop"),
+			action: ()=> {
+				timeline.toggleAnimation();
+			}
+		},
+		{
+			item: localize("+ Add Frame"),
+			speech_recognition: [
+				"add frame", "new frame", "add a frame", "add an animation frame", "insert frame", "insert animation frame", "add frame to timeline", "add animation frame to timeline", "add an animation frame to timeline", "add a frame to the timeline"
+			],
+			action: ()=> { 
+				timeline.addFrameToTimeline();
+			},
+			description: localize("Creates a new frame to the timeline."),
+		},
+		{
+			item: localize("- Remove Selected Frame"),
+			action: ()=> {
+				timeline.removeCurrentFrameFromTimeline();
+			}
+		},
+		{
+			item: localize("< Move Selected Frame Left"),
+			action: ()=> {
+				timeline.shiftFrameLeft();
+			}
+		},
+		{
+			item: localize("> Move Selected Frame Right"),
+			action: ()=> {
+				timeline.shiftFrameRight();
+			}
+		},
+		{
+			item: localize("Settings/Help"),
+			action: ()=> { timeline_attributes(); },
+		},
+		{
+			item: localize("Render Animation As Gif"),
+			action: ()=> {
+				timeline.renderAnimationGif();
+			}
+		},
+	],
 };
+
+
 
 for (const [top_level_menu_key, menu] of Object.entries(menus)) {
 	const top_level_menu_name = top_level_menu_key.replace(/&/, "");

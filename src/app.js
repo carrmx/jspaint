@@ -327,6 +327,7 @@ let $toolbox = $ToolBox(tools);
 // If there's to be extra tools, they should probably get a window, with different UI
 // so it can display names of the tools, and maybe authors and previews (and not necessarily icons)
 
+//appends the colorbox to the bottom dock
 let $colorbox = $ColorBox($("body").hasClass("vertical-color-box-mode"));
 
 $G.on("vertical-color-box-mode-toggled", ()=> {
@@ -413,6 +414,7 @@ $G.on("keydown", e => {
 		e.preventDefault();
 		return;
 	}
+	
 	// @TODO: return if menus/menubar focused or focus in dialog window
 	// or maybe there's a better way to do this that works more generally
 	// maybe it should only handle the event if document.activeElement is the body or html element?
@@ -454,8 +456,26 @@ $G.on("keydown", e => {
 				break;
 		}
 	}
-
-	if(e.keyCode === 27){ //Escape
+	
+	if (e.keyCode === 32) { // space
+		if(timeline) {
+			timeline.toggleAnimation();
+		}
+	} else if (e.keyCode === 187) { // +
+		if(timeline) {
+			timeline.addFrameAfterCurrentFrame();
+		}
+	} else if (e.keyCode === 189) { // -
+		timeline.removeCurrentFrameFromTimeline();
+	} else if (e.keyCode === 188) { // , 
+		if(timeline) {
+			timeline.selectFrameToLeft();
+		}
+	} else if (e.keyCode === 190) { // , 
+		if(timeline) {
+			timeline.selectFrameToRight();
+		}
+	} else if(e.keyCode === 27){ //Escape
 		if(selection){
 			deselect();
 		}else{
@@ -1441,7 +1461,7 @@ $G.on("pointermove", (event)=> {
 // window.onerror = show_error_message;
 
 $canvas.on("pointerdown", e => {
-	update_canvas_rect();
+	//update_canvas_rect();
 
 	// Quick Undo when there are multiple pointers (i.e. for touch)
 	// see pointermove for other pointer types
@@ -1572,4 +1592,15 @@ prevent_selection($colorbox);
 // Stop drawing (or dragging or whatver) if you Alt+Tab or whatever
 $G.on("blur", () => {
 	$G.triggerHandler("pointerup");
+});
+
+//just tossing tl stuff at the end for now to make sure canvas info is already instantiated
+let framerate = 12;
+let timeline = new TimelineObject();
+
+//repeating this event handler as a placeholder for now
+$canvas_area.on("resize", () => {
+	if(timeline) {
+		timeline.resizeFramePreviews();
+	}
 });

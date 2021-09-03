@@ -389,6 +389,15 @@ function reset_canvas_and_history(){
 	$G.triggerHandler("history-update"); // update history view
 }
 
+function reset_timeline() {
+	if(!timeline)
+		return;
+
+	timeline.clearAllFrames();
+	
+	return;
+}
+
 function make_history_node({
 	parent = null,
 	futures = [],
@@ -733,7 +742,8 @@ function file_new(){
 		reset_colors();
 		reset_canvas_and_history(); // (with newly reset colors)
 		set_magnification(default_magnification);
-
+		reset_timeline();
+		
 		$G.triggerHandler("session-update"); // autosave
 	});
 }
@@ -1167,7 +1177,7 @@ function paste(img){
 	}
 }
 
-function render_history_as_gif(){
+function render_history_as_gif(frame_history_nodes = [...undos, current_history_node], rate = 200){
 	const $win = $FormToolWindow();
 	$win.title("Rendering GIF");
 	$win.center();
@@ -1230,7 +1240,8 @@ function render_history_as_gif(){
 		});
 
 		const gif_canvas = make_canvas(width, height);
-		const frame_history_nodes = [...undos, current_history_node];
+		//const frame_history_nodes = history_nodes;
+
 		for(const frame_history_node of frame_history_nodes){
 			gif_canvas.ctx.clearRect(0, 0, gif_canvas.width, gif_canvas.height);
 			gif_canvas.ctx.putImageData(frame_history_node.image_data, 0, 0);
@@ -1238,7 +1249,7 @@ function render_history_as_gif(){
 				const selection_canvas = make_canvas(frame_history_node.selection_image_data);
 				gif_canvas.ctx.drawImage(selection_canvas, frame_history_node.selection_x, frame_history_node.selection_y);
 			}
-			gif.addFrame(gif_canvas, {delay: 200, copy: true});
+			gif.addFrame(gif_canvas, {delay: rate, copy: true});
 		}
 		gif.render();
 
@@ -2048,6 +2059,72 @@ function resize_canvas_and_save_dimensions(unclamped_width, unclamped_height, un
 	}, (/*error*/) => {
 		// oh well
 	})
+}
+
+function timeline_attributes() {
+	if(timeline_attributes.$window){
+		timeline_attributes.$window.close();
+	}
+	const $w = timeline_attributes.$window = new $FormToolWindow(localize("Animation Settings"));
+	$w.addClass("attributes-window");
+
+	const $main = $w.$main;
+
+	// Information
+
+	const table = {
+		[localize("Play/Stop")]: localize("Space"),
+		[localize("Add Frame:")]: localize("+"), 
+		[localize("Delete Frame:")]: "-",
+		[localize("Toggle Frames:")]: ", .",
+	};
+	const $table = $(E("table")).appendTo($main);
+	for(const k in table){
+		const $tr = $(E("tr")).appendTo($table);
+		const $key = $(E("td")).appendTo($tr).text(k);
+		const $value = $(E("td")).appendTo($tr).text(table[k]);
+		if (table[k].indexOf("72") !== -1) {
+			$value.css("direction", "ltr");
+		}
+	}
+
+	// Framerate
+
+	const unit_sizes_in_px = {px: 1, in: 72, cm: 28.3465};
+	let current_unit = image_attributes.unit = image_attributes.unit || "px";
+	let width_in_px = canvas.width;
+	let height_in_px = canvas.height;
+	let new_framerate;
+
+	const $framerate_label = $(E("label")).appendTo($main).text(localize("Framerate:"));
+
+	const $framerate_input = $(E("input")).attr({type: "number", min: 1}).addClass("no-spinner inset-deep").appendTo($framerate_label);
+	$framerate_input.val(framerate);
+
+	$main.find("input")
+		.css({width: "40px"})
+		.on("change keyup keydown keypress pointerdown pointermove paste drop", ()=> {
+			new_framerate = $framerate_input.val();
+		});
+
+	// Buttons on the right
+
+	$w.$Button(localize("OK"), () => {
+		//save framerate setting (if inputted)
+		if(new_framerate > 0) {
+			framerate = new_framerate;
+			//update the ruler
+		}
+		timeline_attributes.$window.close();
+	})[0].focus();
+
+	$w.$Button(localize("Cancel"), () => {
+		timeline_attributes.$window.close();
+	});
+
+	// Reposition the window
+
+	timeline_attributes.$window.center();
 }
 
 function image_attributes(){
